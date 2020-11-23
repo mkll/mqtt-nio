@@ -170,7 +170,7 @@ final class MQTTNIOTests: XCTestCase {
 
     func createWebSocketClient(identifier: String) -> MQTTClient {
         MQTTClient(
-            host: "localhost",
+            host: "soto.codes",
             port: 8080,
             identifier: identifier,
             eventLoopGroupProvider: .createNew,

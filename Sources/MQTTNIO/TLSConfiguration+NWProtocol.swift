@@ -44,7 +44,7 @@ extension TLSConfiguration {
 
     func supportedByTransportServices() -> Bool {
         guard
-            case .default = trustRoots,
+            //case .default = trustRoots,
             certificateChain.count == 0,
             privateKey == nil,
             keyLogCallback == nil else {
@@ -148,9 +148,7 @@ extension TLSConfiguration {
 
                     let trust = sec_trust_copy_ref(sec_trust).takeRetainedValue()
                     if let trustRootCertificates = trustRootCertificates {
-                        //SecTrustSetAnchorCertificates(trust, trustRootCertificates as CFArray)
-                        //SecTrustSetAnchorCertificatesOnly(trust, false)
-                        //SecTrustSetOptions(trust, .implicitAnchors)
+                        SecTrustSetAnchorCertificates(trust, trustRootCertificates as CFArray)
                     }
                     if #available(macOS 10.15, iOS 13.0, *) {
                         SecTrustEvaluateAsyncWithError(trust, TLSConfiguration.tlsDispatchQueue) { (trust, result, error) in

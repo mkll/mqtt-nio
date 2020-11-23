@@ -27,4 +27,3 @@ challengePassword_max		= 20
 [ v3_req ]
 basicConstraints = CA:FALSE
 keyUsage = digitalSignature, keyEncipherment
-extendedKeyUsage = TLS Web Server Authentication, TLS Web Client Authentication

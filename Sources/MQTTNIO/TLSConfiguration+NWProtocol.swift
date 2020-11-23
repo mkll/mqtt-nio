@@ -148,14 +148,25 @@ extension TLSConfiguration {
 
                     let trust = sec_trust_copy_ref(sec_trust).takeRetainedValue()
                     if let trustRootCertificates = trustRootCertificates {
-                        SecTrustSetAnchorCertificates(trust, trustRootCertificates as CFArray)
+                        //SecTrustSetAnchorCertificates(trust, trustRootCertificates as CFArray)
+                        //SecTrustSetAnchorCertificatesOnly(trust, false)
+                        //SecTrustSetOptions(trust, .implicitAnchors)
                     }
-                    SecTrustEvaluateAsync(trust, TLSConfiguration.tlsDispatchQueue) { (trust, result) in
-                        switch result {
-                        case .proceed, .unspecified:
-                            sec_protocol_verify_complete(true)
-                        default:
-                            sec_protocol_verify_complete(false)
+                    if #available(macOS 10.15, iOS 13.0, *) {
+                        SecTrustEvaluateAsyncWithError(trust, TLSConfiguration.tlsDispatchQueue) { (trust, result, error) in
+                            if let error = error {
+                                print("Trust failed: \(error.localizedDescription)")
+                            }
+                            sec_protocol_verify_complete(result)
+                        }
+                    } else {
+                        SecTrustEvaluateAsync(trust, TLSConfiguration.tlsDispatchQueue) { (trust, result) in
+                             switch result {
+                             case .proceed, .unspecified:
+                                sec_protocol_verify_complete(true)
+                             default:
+                                sec_protocol_verify_complete(false)
+                             }
                         }
                     }
                 }, TLSConfiguration.tlsDispatchQueue

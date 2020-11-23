@@ -3,6 +3,7 @@
 set -eux
 
 HOME=$(dirname "$0")
+FULL_HOME="$(pwd)"/"$HOME"
 SERVER=soto.codes
 
 function generateCA() {
@@ -26,8 +27,9 @@ function generateCertificate() {
         -nodes \
         -sha256 \
         -subj "$SUBJECT" \
+        -extensions v3_req \
         -reqexts SAN \
-        -config <(cat /etc/ssl/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:$SERVER\nkeyUsage = digitalSignature, nonRepudiation, keyEncipherment\n")) \
+        -config <(cat "$FULL_HOME"/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:$SERVER\n")) \
         -keyout "$NAME".key \
         -out "$NAME".csr
         
@@ -38,8 +40,8 @@ function generateCertificate() {
         -CA ca.crt \
         -CAkey ca.key \
         -CAcreateserial \
-        -extfile <(cat /etc/ssl/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:$SERVER\nkeyUsage = digitalSignature, nonRepudiation, keyEncipherment\n")) \
-        -extensions SAN \
+        -extfile <(cat "$FULL_HOME"/openssl.cnf <(printf "subjectAltName=DNS:$SERVER\n")) \
+        -extensions v3_req \
         -out "$NAME".crt \
         -days 365
 }

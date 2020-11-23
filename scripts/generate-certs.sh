@@ -27,7 +27,7 @@ function generateCertificate() {
         -sha256 \
         -subj "$SUBJECT" \
         -reqexts SAN \
-        -config <(cat /etc/ssl/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:$SERVER\n")) \
+        -config <(cat /etc/ssl/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:$SERVER\nkeyUsage = digitalSignature, nonRepudiation, keyEncipherment\n")) \
         -keyout "$NAME".key \
         -out "$NAME".csr
         
@@ -38,7 +38,7 @@ function generateCertificate() {
         -CA ca.crt \
         -CAkey ca.key \
         -CAcreateserial \
-        -extfile <(cat /etc/ssl/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:$SERVER\n")) \
+        -extfile <(cat /etc/ssl/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:$SERVER\nkeyUsage = digitalSignature, nonRepudiation, keyEncipherment\n")) \
         -extensions SAN \
         -out "$NAME".crt \
         -days 365
